@@ -1,6 +1,6 @@
 # BetterResult
 
-![min-sdk](https://img.shields.io/badge/minSdk-19-green)![target-sdk](https://img.shields.io/badge/targetSdk-30-blue) ![LICENSE](https://img.shields.io/github/license/moesama/BetterResult)
+![min-sdk](https://img.shields.io/badge/minSdk-19-green) ![target-sdk](https://img.shields.io/badge/targetSdk-30-blue) ![LICENSE](https://img.shields.io/github/license/moesama/BetterResult)
 
 Easy Android New Activity Result Api Helper with kotlin coroutine
 
