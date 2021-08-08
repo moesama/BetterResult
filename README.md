@@ -27,7 +27,7 @@ allprojects {
 
 ```groovy
 dependencies {
-    implementation 'com.github.moesama:BetterResult:1.0.0'
+    implementation 'com.github.moesama:BetterResult:1.0.1'
 }
 ```
 

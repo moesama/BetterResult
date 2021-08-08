@@ -25,7 +25,11 @@ suspend fun <I, O> Activity.requestResult(
     }
     createBro(key, contract) {
         continuation.resume(it)
-    }.launch(this, input)
+    }.runCatching {
+        launch(this@requestResult, input)
+    }.onFailure {
+        continuation.resumeWithException(it)
+    }
 }
 
 suspend fun <I, O> Fragment.requestResult(
@@ -71,11 +75,11 @@ class BetterResultObserver<I, O> internal constructor(
 }
 
 class ContractBuilder<I, O> internal constructor() {
-    private lateinit var intentConfig: Intent.() -> Unit
+    private lateinit var intentConfig: Intent.(input: I?) -> Unit
     private var syncFunc: (context: Context, input: I?) -> O? = { _, _ -> null }
     private lateinit var parseFuc: (resultCode: Int, intent: Intent?) -> O?
 
-    fun intent(block: Intent.() -> Unit) {
+    fun intent(block: Intent.(input: I?) -> Unit) {
         intentConfig = block
     }
 
@@ -88,9 +92,11 @@ class ContractBuilder<I, O> internal constructor() {
     }
 
     fun build(): ActivityResultContract<I, O> = object : ActivityResultContract<I, O>() {
-        override fun createIntent(context: Context, input: I): Intent = Intent().apply(intentConfig)
+        override fun createIntent(context: Context, input: I?): Intent = Intent().apply {
+            intentConfig.invoke(this, input)
+        }
 
-        override fun getSynchronousResult(context: Context, input: I): SynchronousResult<O>? =
+        override fun getSynchronousResult(context: Context, input: I?): SynchronousResult<O>? =
             syncFunc.invoke(context, input)?.let { SynchronousResult(it) }
 
         override fun parseResult(resultCode: Int, intent: Intent?): O? =
